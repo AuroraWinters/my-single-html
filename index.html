@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>问宇 - 星辰为引，心忱为邻</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind 配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            star: '#1E40AF', // 星辰蓝（主色）
+            heart: '#F97316', // 心忱橙（辅助色）
+            cosmic: {
+              100: '#F0F4FF',
+              200: '#E0E7FF',
+              300: '#C7D2FE',
+              400: '#A5B4FC',
+              500: '#818CF8',
+              600: '#6366F1',
+              700: '#4F46E5',
+              800: '#4338CA',
+              900: '#3730A3',
+            },
+            warm: {
+              100: '#FFF7ED',
+              200: '#FFEDD5',
+              300: '#FED7AA',
+              400: '#FDBA74',
+              500: '#FB923C',
+              600: '#F97316',
+              700: '#EA580C',
+              800: '#C2410C',
+              900: '#9A3412',
+            }
+          },
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+            orbitron: ['Orbitron', 'sans-serif'], // 科技感字体
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .text-shadow-cosmic {
+        text-shadow: 0 2px 8px rgba(30, 64, 175, 0.3);
+      }
+      .text-shadow-warm {
+        text-shadow: 0 2px 8px rgba(249, 115, 22, 0.2);
+      }
+      .card-hover {
+        transition: all 0.3s ease;
+      }
+      .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+      }
+      .gradient-cosmic {
+        background: linear-gradient(135deg, #1E40AF 0%, #4338CA 100%);
+      }
+      .gradient-warm {
+        background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+      }
+      .star-animation {
+        animation: twinkle 4s infinite alternate;
+      }
+      @keyframes twinkle {
+        0% { opacity: 0.4; transform: scale(0.9); }
+        100% { opacity: 1; transform: scale(1.1); }
+      }
+    }
+  </style>
+</head>
+
+<body class="font-inter bg-cosmic-100 text-gray-800 min-h-screen flex flex-col">
+  <!-- 导航栏 -->
+  <header id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 bg-white/95 backdrop-blur-sm shadow-sm">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <!-- Logo -->
+        <div class="flex items-center">
+          <a href="#" class="flex items-center space-x-2">
+            <div class="w-10 h-10 rounded-full gradient-cosmic flex items-center justify-center">
+              <span class="text-white font-orbitron font-bold text-xl">W</span>
+            </div>
+            <span class="text-xl font-orbitron font-bold text-star">问宇</span>
+          </a>
+        </div>
+        
+        <!-- 桌面导航 -->
+        <nav class="hidden md:flex items-center space-x-8">
+          <a href="#home" class="text-gray-600 hover:text-star transition-colors font-medium">首页</a>
+          <a href="#stars" class="text-gray-600 hover:text-star transition-colors font-medium">问宇星辰</a>
+          <a href="#heart" class="text-gray-600 hover:text-heart transition-colors font-medium">问宇心忱</a>
+          <a href="#wishes" class="text-gray-600 hover:text-star transition-colors font-medium">星辰许愿</a>
+          <a href="#activities" class="text-gray-600 hover:text-heart transition-colors font-medium">联合活动</a>
+        </nav>
+        
+        <!-- 用户操作 -->
+        <div class="flex items-center space-x-4">
+          <button class="hidden md:block px-4 py-2 rounded-full gradient-cosmic text-white hover:opacity-90 transition-all">
+            发布内容
+          </button>
+          <div class="relative">
+            <button class="w-10 h-10 rounded-full bg-cosmic-200 overflow-hidden border-2 border-cosmic-300">
+              <img src="https://picsum.photos/200/200?random=10" alt="用户头像" class="w-full h-full object-cover">
+            </button>
+          </div>
+          
+          <!-- 移动端菜单按钮 -->
+          <button id="menu-toggle" class="md:hidden text-gray-600">
+            <i class="fa fa-bars text-xl"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 移动端导航菜单 -->
+    <div id="mobile-menu" class="md:hidden hidden bg-white border-t border-cosmic-200">
+      <div class="container mx-auto px-4 py-3 space-y-3">
+        <a href="#home" class="block py-2 text-gray-600 hover:text-star transition-colors">首页</a>
+        <a href="#stars" class="block py-2 text-gray-600 hover:text-star transition-colors">问宇星辰</a>
+        <a href="#heart" class="block py-2 text-gray-600 hover:text-heart transition-colors">问宇心忱</a>
+        <a href="#wishes" class="block py-2 text-gray-600 hover:text-star transition-colors">星辰许愿</a>
+        <a href="#activities" class="block py-2 text-gray-600 hover:text-heart transition-colors">联合活动</a>
+        <button class="w-full px-4 py-2 rounded-full gradient-cosmic text-white hover:opacity-90 transition-all">
+          发布内容
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <main class="flex-grow pt-16">
+    <!-- 英雄区 -->
+    <section id="home" class="relative overflow-hidden">
+      <!-- 星空背景 -->
+      <div class="absolute inset-0 bg-cosmic-900">
+        <div class="absolute inset-0 opacity-30">
+          <div class="absolute top-0 left-0 w-full h-full bg-[url('https://picsum.photos/1920/1080?random=50')] bg-cover bg-center"></div>
+        </div>
+        <!-- 动态星星 -->
+        <div class="absolute inset-0">
+          <i class="fa fa-star absolute text-white star-animation" style="top: 15%; left: 10%; font-size: 1rem; animation-delay: 0s;"></i>
+          <i class="fa fa-star absolute text-white star-animation" style="top: 25%; left: 85%; font-size: 0.8rem; animation-delay: 0.5s;"></i>
+          <i class="fa fa-star absolute text-white star-animation" style="top: 40%; left: 30%; font-size: 1.2rem; animation-delay: 1s;"></i>
+          <i class="fa fa-star absolute text-white star-animation" style="top: 60%; left: 70%; font-size: 0.9rem; animation-delay: 1.5s;"></i>
+          <i class="fa fa-star absolute text-white star-animation" style="top: 80%; left: 45%; font-size: 1.1rem; animation-delay: 2s;"></i>
+          <i class="fa fa-star absolute text-white star-animation" style="top: 30%; left: 60%; font-size: 0.7rem; animation-delay: 2.5s;"></i>
+          <i class="fa fa-star absolute text-white star-animation" style="top: 70%; left: 20%; font-size: 1rem; animation-delay: 3s;"></i>
+        </div>
+      </div>
+      
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-36 relative z-10">
+        <div class="max-w-4xl mx-auto text-center">
+          <h1 class="text-[clamp(2.2rem,6vw,4rem)] font-orbitron font-bold text-white leading-tight text-shadow-cosmic mb-6">
+            问宇星辰 <span class="text-heart">//</span> 问宇心忱
+          </h1>
+          <p class="text-[clamp(1.1rem,2.5vw,1.4rem)] text-cosmic-100 mb-10 max-w-3xl mx-auto">
+            物理社 × 心协 联合打造<br>
+            探索宇宙奥秘，守护心灵微光，遇见同频的你
+          </p>
+          
+          <!-- 双主题标签 -->
+          <div class="flex flex-wrap justify-center gap-4 mb-10">
+            <span class="px-4 py-2 bg-star/20 backdrop-blur-sm border border-star/30 rounded-full text-white text-sm font-medium">
+              <i class="fa fa-star-o mr-2"></i>物理科普 · 天文观测 · 科研交流
+            </span>
+            <span class="px-4 py-2 bg-heart/20 backdrop-blur-sm border border-heart/30 rounded-full text-white text-sm font-medium">
+              <i class="fa fa-heart-o mr-2"></i>心灵陪伴 · 压力疏导 · 情感交流
+            </span>
+          </div>
+          
+          <!-- 搜索框 -->
+          <div class="relative max-w-2xl mx-auto">
+            <input 
+              type="text" 
+              placeholder="搜索物理问题、心灵困惑或活动信息..." 
+              class="w-full px-6 py-4 rounded-full bg-white/90 shadow-xl focus:outline-none focus:ring-2 focus:ring-star/50 text-gray-800"
+            >
+            <button class="absolute right-3 top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full gradient-cosmic flex items-center justify-center text-white">
+              <i class="fa fa-search"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 波浪装饰 -->
+      <div class="absolute bottom-0 left-0 w-full overflow-hidden">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" class="w-full h-auto">
+          <path fill="#F0F4FF" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+        </svg>
+      </div>
+    </section>
+    
+    <!-- 数据概览 -->
+    <section class="py-12 bg-white">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          <div class="p-6 bg-cosmic-50 rounded-xl border border-cosmic-200">
+            <div class="text-4xl font-orbitron font-bold text-star mb-2" id="member-count">0</div>
+            <div class="text-gray-600">联合社员</div>
+          </div>
+          <div class="p-6 bg-cosmic-50 rounded-xl border border-cosmic-200">
+            <div class="text-4xl font-orbitron font-bold text-star mb-2" id="topic-count">0</div>
+            <div class="text-gray-600">交流话题</div>
+          </div>
+          <div class="p-6 bg-warm-50 rounded-xl border border-warm-200">
+            <div class="text-4xl font-orbitron font-bold text-heart mb-2" id="wish-count">0</div>
+            <div class="text-gray-600">星辰愿望</div>
+          </div>
+          <div class="p-6 bg-warm-50 rounded-xl border border-warm-200">
+            <div class="text-4xl font-orbitron font-bold text-heart mb-2" id="activity-count">0</div>
+            <div class="text-gray-600">联合活动</div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 问宇星辰专题区（物理社核心） -->
+    <section id="stars" class="py-18 bg-cosmic-100">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-[clamp(1.8rem,3.5vw,2.8rem)] font-orbitron font-bold text-star mb-4 text-shadow-cosmic">问宇星辰</h2>
+          <p class="text-gray-600 max-w-2xl mx-auto text-lg">以物理为翼，探索宇宙未知，分享科研点滴</p>
+          <div class="w-24 h-1 bg-star/50 mx-auto mt-6 rounded-full"></div>
+        </div>
+        
+        <!-- 星辰专题卡片 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          <!-- 天文观测 -->
+          <div class="bg-white rounded-2xl shadow-md overflow-hidden card-hover border border-cosmic-200">
+            <div class="h-48 relative">
+              <img src="https://picsum.photos/600/400?random=51" alt="天文观测" class="w-full h-full object-cover">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+              <div class="absolute bottom-4 left-4 right-4">
+                <h3 class="text-xl font-bold text-white font-orbitron">天文观测</h3>
+                <p class="text-white/80 text-sm">星河万顷，邀你共赏</p>
+              </div>
+            </div>
+            <div class="p-6">
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span class="px-2 py-1 bg-cosmic-100 text-star text-xs rounded-full">观测活动</span>
+                <span class="px-2 py-1 bg-cosmic-100 text-star text-xs rounded-full">设备分享</span>
+                <span class="px-2 py-1 bg-cosmic-100 text-star text-xs rounded-full">星图交流</span>
+                <span class="px-2 py-1 bg-cosmic-100 text-star text-xs rounded-full">摄影技巧</span>
+              </div>
+              <p class="text-gray-600 text-sm mb-4">
+                分享天文观测经验，组织线下观测活动，交流星象拍摄技巧，一起记录宇宙的浪漫。
+              </p>
+              <a href="#" class="inline-flex items-center text-star font-medium hover:text-cosmic-700 transition-colors">
+                进入专题 <i class="fa fa-arrow-right ml-1 text-sm"></i>
+              </a>
+            </div>
+          </div>
+          
+          <!-- 物理科普 -->
+          <div class="bg-white rounded-2xl shadow-md overflow-hidden card-hover border border-cosmic-200">
+            <div class="h-48 relative">
+              <img src="https://picsum.photos/600/400?random=52" alt="物理科普" class="w-full h-full object-cover">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+              <div class="absolute bottom-4 left-4 right-4">
+                <h3 class="text-xl font-bold text-white font-orbitron">物理科普</h3>
+                <p class="text-white/80 text-sm">万物之理，深入浅出</p>
+              </div>
+            </div>
+            <div class="p-6">
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span class="px-2 py-1 bg-cosmic-100 text-star text-xs rounded-full">趣味物理</span>
+                <span class="px-2 py-1 bg-cosmic-100 text-star text-xs rounded-full">公式推导</span>
+                <span class="px-2 py-1 bg-cosmic-100 text-star text-xs rounded-full">实验原理</span>
+                <span class="px-2 py-1 bg-cosmic-100 text-star text-xs rounded-full">科普文章</span>
+              </div>
+              <p class="text-gray-600 text-sm mb-4">
+                用通俗的语言解读复杂物理原理，分享趣味物理实验，解答学习中的疑惑，让物理不再遥远。
+              </p>
+              <a href="#" class="inline-flex items-center text-star font-medium hover:text-cosmic-700 transition-colors">
+                进入专题 <i class="fa fa-arrow-right ml-1 text-sm"></i>
+              </a>
+            </div>
+          </div>
+          
+          <!-- 科研入门 -->
+          <div class="bg-white rounded-2xl shadow-md overflow-hidden card-hover border border-cosmic-200">
+            <div class="h-48 relative">
+              <img src="https://picsum.photos/600/400?random=53" alt="科研入门" class="w-full h-full object-cover">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+              <div class="absolute bottom-4 left-4 right-4">
+                <h3 class="text-xl font-bold text-white font-orbitron">科研入门</h3>
+                <p class="text-white/80 text-sm">探索未知，始于足下</p>
+              </div>
+            </div>
+            <div class="p-6">
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span class="px-2 py-1 bg-cosmic-100 text-star text-xs rounded-full">文献阅读</span>
+                <span class="px-2 py-1 bg-cosmic-100 text-star text-xs rounded-full">课题选择</span>
+                <span class="px-2 py-1 bg-cosmic-100 text-star text-xs rounded-full">论文写作</span>
+                <span class="px-2 py-1 bg-cosmic-100 text-star text-xs rounded-full">导师对接</span>
+              </div>
+              <p class="text-gray-600 text-sm mb-4">
+                学长学姐分享科研经验，提供文献资源，解答入门困惑，帮助你迈出科研第一步。
+              </p>
+              <a href="#" class="inline-flex items-center text-star font-medium hover:text-cosmic-700 transition-colors">
+                进入专题 <i class="fa fa-arrow-right ml-1 text-sm"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 热门星辰讨论 -->
+        <div class="bg-white rounded-2xl shadow-md p-6 md:p-8 border border-cosmic-200">
+          <h3 class="text-xl font-orbitron font-bold text-star mb-6">热门星辰讨论</h3>
+          <div class="space-y-6">
+            <!-- 讨论项1 -->
+            <div class="flex flex-col md:flex-row gap-4 items-start p-4 border-b border-cosmic-100">
+              <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                <img src="https://picsum.photos/200/200?random=61" alt="用户头像" class="w-full h-full object-cover">
+              </div>
+              <div class="flex-grow">
+                <div class="flex flex-wrap items-center gap-2 mb-2">
+                  <h4 class="font-semibold text-gray-800">赵同学（物理社）</h4>
+                  <span class="px-2 py-0.5 bg-cosmic-100 text-star text-xs rounded-full">天文观测</span>
+                  <span class="text-gray-400 text-xs">3小时前</span>
+                </div>
+                <p class="text-gray-600 mb-3">
+                  下周末有英仙座流星雨，有没有同学想一起去郊区观测？需要携带哪些设备？新手求带！
+                </p>
+                <div class="flex items-center space-x-6">
+                  <button class="flex items-center space-x-1 text-gray-500 hover:text-star transition-colors">
+                    <i class="fa fa-comment-o"></i>
+                    <span>18 回复</span>
+                  </button>
+                  <button class="flex items-center space-x-1 text-gray-500 hover:text-star transition-colors">
+                    <i class="fa fa-heart-o"></i>
+                    <span>32 赞同</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- 讨论项2 -->
+            <div class="flex flex-col md:flex-row gap-4 items-start p-4 border-b border-cosmic-100">
+              <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                <img src="https://picsum.photos/200/200?random=62" alt="用户头像" class="w-full h-full object-cover">
+              </div>
+              <div class="flex-grow">
+                <div class="flex flex-wrap items-center gap-2 mb-2">
+                  <h4 class="font-semibold text-gray-800">陈学长（物理社）</h4>
+                  <span class="px-2 py-0.5 bg-cosmic-100 text-star text-xs rounded-full">科研入门</span>
+                  <span class="text-gray-400 text-xs">1天前</span>
+                </div>
+                <p class="text-gray-600 mb-3">
+                  分享一份物理科研入门书单，从基础到进阶，附文献查找技巧，适合大一大二同学参考～
+                </p>
+                <div class="flex items-center space-x-6">
+                  <button class="flex items-center space-x-1 text-gray-500 hover:text-star transition-colors">
+                    <i class="fa fa-comment-o"></i>
+                    <span>45 回复</span>
+                  </button>
+                  <button class="flex items-center space-x-1 text-gray-500 hover:text-star transition-colors">
+                    <i class="fa fa-heart-o"></i>
+                    <span>78 赞同</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="text-center mt-6">
+            <a href="#" class="inline-flex items-center text-star font-medium hover:underline">
+              查看更多讨论 <i class="fa fa-angle-right ml-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 问宇心忱专题区（心协核心） -->
+    <section id="heart" class="py-18 bg-warm-100">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-[clamp(1.8rem,3.5vw,2.8rem)] font-orbitron font-bold text-heart mb-4 text-shadow-warm">问宇心忱</h2>
+          <p class="text-gray-600 max-w-2xl mx-auto text-lg">以温暖为光，守护心灵微光，传递陪伴力量</p>
+          <div class="w-24 h-1 bg-heart/50 mx-auto mt-6 rounded-full"></div>
+        </div>
+        
+        <!-- 心忱专题卡片 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          <!-- 心灵树洞 -->
+          <div class="bg-white rounded-2xl shadow-md overflow-hidden card-hover border border-warm-200">
+            <div class="h-48 relative">
+              <img src="https://picsum.photos/600/400?random=71" alt="心灵树洞" class="w-full h-full object-cover">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+              <div class="absolute bottom-4 left-4 right-4">
+                <h3 class="text-xl font-bold text-white font-orbitron">心灵树洞</h3>
+                <p class="text-white/80 text-sm">匿名倾诉，温暖回应</p>
+              </div>
+            </div>
+            <div class="p-6">
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span class="px-2 py-1 bg-warm-100 text-heart text-xs rounded-full">情感困扰</span>
+                <span class="px-2 py-1 bg-warm-100 text-heart text-xs rounded-full">学业压力</span>
+                <span class="px-2 py-1 bg-warm-100 text-heart text-xs rounded-full">人际烦恼</span>
+                <span class="px-2 py-1 bg-warm-100 text-heart text-xs rounded-full">未来迷茫</span>
+              </div>
+              <p class="text-gray-600 text-sm mb-4">
+                匿名分享你的心事，无需伪装，无需顾虑，这里有倾听者和陪伴者，为你点亮心灵微光。
+              </p>
+              <a href="#" class="inline-flex items-center text-heart font-medium hover:text-warm-700 transition-colors">
+                进入专题 <i class="fa fa-arrow-right ml-1 text-sm"></i>
+              </a>
+            </div>
+          </div>
+          
+          <!-- 压力疏导 -->
+          <div class="bg-white rounded-2xl shadow-md overflow-hidden card-hover border border-warm-200">
+            <div class="h-48 relative">
+              <img src="https://picsum.photos/600/400?random=72" alt="压力疏导" class="w-full h-full object-cover">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+              <div class="absolute bottom-4 left-4 right-4">
+                <h3 class="text-xl font-bold text-white font-orbitron">压力疏导</h3>
+                <p class="text-white/80 text-sm">与焦虑和解，与自己相处</p>
+              </div>
+            </div>
+            <div class="p-6">
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span class="px-2 py-1 bg-warm-100 text-heart text-xs rounded-full">备考减压</span>
+                <span class="px-2 py-1 bg-warm-100 text-heart text-xs rounded-full">科研焦虑</span>
+                <span class="px-2 py-1 bg-warm-100 text-heart text-xs rounded-full">调节方法</span>
+                <span class="px-2 py-1 bg-warm-100 text-heart text-xs rounded-full">正念冥想</span>
+              </div>
+              <p class="text-gray-600 text-sm mb-4">
+                分享实用的压力调节技巧，心协专业志愿者提供指导，帮助你缓解焦虑，找回内心平静。
+              </p>
+              <a href="#" class="inline-flex items-center text-heart font-medium hover:text-warm-700 transition-colors">
+                进入专题 <i class="fa fa-arrow-right ml-1 text-sm"></i>
+              </a>
+            </div>
+          </div>
+          
+          <!-- 人际支持 -->
+          <div class="bg-white rounded-2xl shadow-md overflow-hidden card-hover border border-warm-200">
+            <div class="h-48 relative">
+              <img src="https://picsum.photos/600/400?random=73" alt="人际支持" class="w-full h-full object-cover">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+              <div class="absolute bottom-4 left-4 right-4">
+                <h3 class="text-xl font-bold text-white font-orbitron">人际支持</h3>
+                <p class="text-white/80 text-sm">遇见同频，温暖相伴</p>
+              </div>
+            </div>
+            <div class="p-6">
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span class="px-2 py-1 bg-warm-100 text-heart text-xs rounded-full">兴趣交友</span>
+                <span class="px-2 py-1 bg-warm-100 text-heart text-xs rounded-full">学习搭子</span>
+                <span class="px-2 py-1 bg-warm-100 text-heart text-xs rounded-full">科研伙伴</span>
+                <span class="px-2 py-1 bg-warm-100 text-heart text-xs rounded-full">生活同行</span>
+              </div>
+              <p class="text-gray-600 text-sm mb-4">
+                寻找志同道合的朋友，无论是学习互助、科研合作，还是日常陪伴，在这里遇见温暖的同行者。
+              </p>
+              <a href="#" class="inline-flex items-center text-heart font-medium hover:text-warm-700 transition-colors">
+                进入专题 <i class="fa fa-arrow-right ml-1 text-sm"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 心协志愿者展示 -->
+        <div class="bg-white rounded-2xl shadow-md p-6 md:p-8 border border-warm-200">
+          <h3 class="text-xl font-orbitron font-bold text-heart mb-6">心协陪伴者</h3>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+            <!-- 志愿者1 -->
+            <div class="text-center p-4 bg-warm-50 rounded-xl">
+              <div class="w-20 h-20 rounded-full overflow-hidden mx-auto mb-3 border-2 border-warm-200">
+                <img src="https://picsum.photos/200/200?random=81" alt="志愿者" class="w-full h-full object-cover">
+              </div>
+              <h4 class="font-semibold text-gray-800 mb-1">林学姐</h4>
+              <p class="text-sm text-gray-500 mb-2">心理学专业 · 大三</p>
+              <span class="px-2 py-1 bg-warm-100 text-heart text-xs rounded-full">情感支持</span>
+            </div>
+            <!-- 志愿者2 -->
+            <div class="text-center p-4 bg-warm-50 rounded-xl">
+              <div class="w-20 h-20 rounded-full overflow-hidden mx-auto mb-3 border-2 border-warm-200">
+                <img src="https://picsum.photos/200/200?random=82" alt="志愿者" class="w-full h-full object-cover">
+              </div>
+              <h4 class="font-semibold text-gray-800 mb-1">王学长</h4>
+              <p class="text-sm text-gray-500 mb-2">应用心理 · 大四</p>
+              <span class="px-2 py-1 bg-warm-100 text-heart text-xs rounded-full">压力疏导</span>
+            </div>
+            <!-- 志愿者3 -->
+            <div class="text-center p-4 bg-warm-50 rounded-xl">
+              <div class="w-20 h-20 rounded-full overflow-hidden mx-auto mb-3 border-2 border-warm-200">
+                <img src="https://picsum.photos/200/200?random=83" alt="志愿者" class="w-full h-full object-cover">
+              </div>
+              <h4 class="font-semibold text-gray-800 mb-1">张同学</h4>
+              <p class="text-sm text-gray-500 mb-2">心理学专业 · 大二</p>
+              <span class="px-2 py-1 bg-warm-100 text-heart text-xs rounded-full">人际指导</span>
+            </div>
+            <!-- 志愿者4 -->
+            <div class="text-center p-4 bg-warm-50 rounded-xl">
+              <div class="w-20 h-20 rounded-full overflow-hidden mx-auto mb-3 border-2 border-warm-200">
+                <img src="https://picsum.photos/200/200?random=84" alt="志愿者" class="w-full h-full object-cover">
+              </div>
+              <h4 class="font-semibold text-gray-800 mb-1">李学姐</h4>
+              <p class="text-sm text-gray-500 mb-2">心理咨询 · 研一</p>
+              <span class="px-2 py-1 bg-warm-100 text-heart text-xs rounded-full">专业咨询</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 星辰许愿区 -->
+    <section id="wishes" class="py-18 bg-gradient-to-b from-cosmic-100 to-warm-100 relative overflow-hidden">
+      <!-- 星空装饰 -->
+      <div class="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10">
+        <i class="fa fa-star absolute text-star star-animation" style="top: 10%; left: 5%; font-size: 2rem;"></i>
+        <i class="fa fa-star absolute text-star star-animation" style="top: 20%; left: 80%; font-size: 1.5rem; animation-delay: 0.5s;"></i>
+        <i class="fa fa-heart absolute text-heart star-animation" style="top: 70%; left: 10%; font-size: 1.2rem; animation-delay: 1s;"></i>
+        <i class="fa fa-heart absolute text-heart star-animation" style="top: 40%; left: 90%; font-size: 1.8rem; animation-delay: 1.5s;"></i>
+        <i class="fa fa-star absolute text-star star-animation" style="top: 60%; left: 70%; font-size: 1.4rem; animation-delay: 2s;"></i>
+      </div>
+      
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="text-center mb-16">
+          <h2 class="text-[clamp(1.8rem,3.5vw,2.8rem)] font-orbitron font-bold mb-4">
+            <span class="text-star">星辰</span>许愿
+          </h2>
+          <p class="text-gray-600 max-w-2xl mx-auto text-lg">写下你的心愿，物理社与心协一同为你助力</p>
+          <div class="w-24 h-1 bg-gradient-to-r from-star to-heart mx-auto mt-6 rounded-full"></div>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+          <!-- 许愿表单 -->
+          <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 border border-cosmic-200/50">
+            <h3 class="text-xl font-orbitron font-bold mb-6 text-gray-800">许下你的心愿</h3>
+            <form>
+              <div class="mb-4">
+                <label for="wish-type" class="block text-sm font-medium text-gray-700 mb-1">愿望类型</label>
+                <select id="wish-type" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-star focus:border-star">
+                  <option value="">请选择愿望类型</option>
+                  <option value="physics">物理学习/科研相关</option>
+                  <option value="emotion">情感支持/心理疏导</option>
+                  <option value="friend">寻找同好/学习搭子</option>
+                  <option value="activity">希望参与的活动</option>
+                  <option value="gift">一份小礼品（物理周边/暖心好物）</option>
+                  <option value="other">其他愿望</option>
+                </select>
+              </div>
+              
+              <div class="mb-4">
+                <label for="wish-content" class="block text-sm font-medium text-gray-700 mb-1">愿望内容</label>
+                <textarea id="wish-content" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-star focus:border-star" placeholder="请详细描述你的愿望..."></textarea>
+              </div>
+              
+              <div class="mb-6">
+                <label for="wish-email" class="block text-sm font-medium text-gray-700 mb-1">联系邮箱</label>
+                <input type="email" id="wish-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-star focus:border-star" placeholder="我们会通过邮箱联系你">
+              </div>
+              
+              <button type="submit" class="w-full py-3 gradient-cosmic text-white rounded-lg hover:opacity-90 transition-all font-medium">
+                放飞愿望 <i class="fa fa-paper-plane ml-2"></i>
+              </button>
+            </form>
+          </div>
+          
+          <!-- 愿望展示与统计 -->
+          <div>
+            <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 border border-warm-200/50 mb-6">
+              <h3 class="text-xl font-orbitron font-bold mb-4 text-gray-800">最近的愿望</h3>
+              
+              <div class="space-y-4 max-h-80 overflow-y-auto pr-2">
+                <!-- 愿望卡片1 -->
+                <div class="p-4 border border-warm-100 rounded-lg bg-warm-50">
+                  <div class="flex justify-between items-start mb-2">
+                    <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">已实现</span>
+                    <span class="text-gray-400 text-xs">2小时前</span>
+                  </div>
+                  <p class="text-gray-700 text-sm mb-2">"希望能找到一起做量子物理课题的队友，最好有实验基础～"</p>
+                  <div class="text-xs text-gray-500">
+                    <i class="fa fa-tag mr-1"></i> 物理学习/科研相关
+                  </div>
+                </div>
+                
+                <!-- 愿望卡片2 -->
+                <div class="p-4 border border-warm-100 rounded-lg bg-warm-50">
+                  <div class="flex justify-between items-start mb-2">
+                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">处理中</span>
+                    <span class="text-gray-400 text-xs">昨天</span>
+                  </div>
+                  <p class="text-gray-700 text-sm mb-2">"备考期末压力很大，希望能得到一些高效减压的方法，谢谢～"</p>
+                  <div class="text-xs text-gray-500">
+                    <i class="fa fa-tag mr-1"></i> 情感支持/心理疏导
+                  </div>
+                </div>
+                
+                <!-- 愿望卡片3 -->
+                <div class="p-4 border border-warm-100 rounded-lg bg-warm-50">
+                  <div class="flex justify-between items-start mb-2">
+                    <span class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full">待处理</span>
+                    <span class="text-gray-400 text-xs">3天前</span>
+                  </div>
+                  <p class="text-gray-700 text-sm mb-2">"想要一套物理公式手账，复习的时候能更方便，求中奖！"</p>
+                  <div class="text-xs text-gray-500">
+                    <i class="fa fa-tag mr-1"></i> 一份小礼品（物理周边/暖心好物）
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 愿望实现统计 -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 border border-cosmic-200/50">
+              <h3 class="text-xl font-orbitron font-bold mb-4 text-gray-800">愿望实现情况</h3>
+              <div class="h-48">
+                <canvas id="wishChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 联合活动区 -->
+    <section id="activities" class="py-18 bg-white">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-[clamp(1.8rem,3.5vw,2.8rem)] font-orbitron font-bold text-gray-800 mb-4">联合活动</h2>
+          <p class="text-gray-600 max-w-2xl mx-auto text-lg">物理社 × 心协 共同打造，兼具知识与温度的精彩活动</p>
+          <div class="w-24 h-1 bg-gray-400 mx-auto mt-6 rounded-full"></div>
+        </div>
+        
+        <!-- 活动卡片 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- 活动1 -->
+          <div class="bg-cosmic-50 rounded-2xl shadow-md overflow-hidden card-hover border border-cosmic-200">
+            <div class="h-48 relative">
+              <img src="https://picsum.photos/600/400?random=91" alt="星空观测夜" class="w-full h-full object-cover">
+              <div class="absolute top-4 left-4">
+                <span class="px-3 py-1 bg-star text-white text-xs rounded-full">线下活动</span>
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="text-xl font-orbitron font-bold text-star mb-2">星空观测夜 · 心灵对话</h3>
+              <div class="flex items-center text-gray-500 text-sm mb-4">
+                <i class="fa fa-calendar-o mr-2"></i> 2024-10-26 19:00-22:00
+                <i class="fa fa-map-marker ml-6 mr-2"></i> 学校天文台
+              </div>
+              <p class="text-gray-600 text-sm mb-4">
+                联合天文观测与心灵分享，在璀璨星空下，放下焦虑，交流心声，感受宇宙浩瀚与内心平静。
+              </p>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-500">剩余名额：12/50</span>
+                <button class="px-4 py-2 bg-star text-white rounded-lg hover:bg-cosmic-700 transition-colors text-sm">
+                  立即报名
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 活动2 -->
+          <div class="bg-warm-50 rounded-2xl shadow-md overflow-hidden card-hover border border-warm-200">
+            <div class="h-48 relative">
+              <img src="https://picsum.photos/600/400?random=92" alt="科研压力疏导工作坊" class="w-full h-full object-cover">
+              <div class="absolute top-4 left-4">
+                <span class="px-3 py-1 bg-heart text-white text-xs rounded-full">线下活动</span>
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="text-xl font-orbitron font-bold text-heart mb-2">科研压力疏导工作坊</h3>
+              <div class="flex items-center text-gray-500 text-sm mb-4">
+                <i class="fa fa-calendar-o mr-2"></i> 2024-11-02 14:30-17:00
+                <i class="fa fa-map-marker ml-6 mr-2"></i> 学生活动中心302
+              </div>
+              <p class="text-gray-600 text-sm mb-4">
+                针对物理专业科研压力，心协专业导师分享减压技巧，物理学长学姐经验交流，助你轻松应对科研挑战。
+              </p>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-500">剩余名额：8/30</span>
+                <button class="px-4 py-2 bg-heart text-white rounded-lg hover:bg-warm-700 transition-colors text-sm">
+                  立即报名
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 活动3 -->
+          <div class="bg-cosmic-50 rounded-2xl shadow-md overflow-hidden card-hover border border-cosmic-200">
+            <div class="h-48 relative">
+              <img src="https://picsum.photos/600/400?random=93" alt="物理科普征文大赛" class="w-full h-full object-cover">
+              <div class="absolute top-4 left-4">
+                <span class="px-3 py-1 bg-gray-600 text-white text-xs rounded-full">线上活动</span>
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="text-xl font-orbitron font-bold text-star mb-2">物理科普征文大赛</h3>
+              <div class="flex items-center text-gray-500 text-sm mb-4">
+                <i class="fa fa-calendar-o mr-2"></i> 2024-10-20 至 2024-11-20
+                <i class="fa fa-globe ml-6 mr-2"></i> 线上提交
+              </div>
+              <p class="text-gray-600 text-sm mb-4">
+                用生动的文字解读物理奥秘，优秀作品将获得物理周边大礼包，并有机会在校园公众号发表。
+              </p>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-500">投稿人数：42人</span>
+                <button class="px-4 py-2 bg-star text-white rounded-lg hover:bg-cosmic-700 transition-colors text-sm">
+                  立即投稿
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 活动日历入口 -->
+        <div class="text-center mt-12">
+          <a href="#" class="inline-flex items-center px-6 py-3 border border-star text-star rounded-full hover:bg-star hover:text-white transition-colors font-medium">
+            查看完整活动日历 <i class="fa fa-calendar ml-2"></i>
+          </a>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 社长致辞 -->
+    <section class="py-18 bg-gradient-cosmic text-white">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto text-center">
+          <div class="w-24 h-24 rounded-full overflow-hidden mx-auto mb-8 border-4 border-white/30">
+            <img src="https://picsum.photos/200/200?random=100" alt="问宇物理社社长" class="w-full h-full object-cover">
+          </div>
+          <h2 class="text-[clamp(1.5rem,3vw,2.2rem)] font-orbitron font-bold mb-6">社长致辞</h2>
+          <p class="text-white/90 text-lg leading-relaxed mb-8">
+            作为问宇物理社社长，我一直希望打造一个既有专业深度，又有温度的交流平台。联合心协推出"问宇星辰//问宇心忱"项目，是希望既能满足大家对物理知识的探索欲，也能关注到每一位同学的心灵需求。<br><br>
+            在这里，你可以畅谈宇宙奥秘，也可以倾诉内心烦恼；可以找到科研伙伴，也可以遇见温暖陪伴。愿我们以星辰为引，以心忱为邻，在问宇的世界里，共同成长，不负韶华。
+          </p>
+          <div class="font-orbitron text-xl font-semibold">问宇物理社 社长 · 李明宇</div>
+        </div>
+      </div>
+    </section>
+  </main>
+  
+  <!-- 页脚 -->
+  <footer class="bg-gray-900 text-white pt-16 pb-8">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+        <!-- 关于问宇 -->
+        <div>
+          <div class="flex items-center space-x-2 mb-6">
+            <div class="w-10 h-10 rounded-full gradient-cosmic flex items-center justify-center">
+              <span class="text-white font-orbitron font-bold text-xl">W</span>
+            </div>
+            <span class="text-xl font-orbitron font-bold">问宇</span>
+          </div>
+          <p class="text-gray-400 mb-6">
+            物理社 × 心协 联合打造<br>
+            星辰为引，心忱为邻<br>
+            探索宇宙，守护心灵
+          </p>
+          <div class="flex space-x-4">
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-star transition-colors">
+              <i class="fa fa-weixin"></i>
+            </a>
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-star transition-colors">
+              <i class="fa fa-weibo"></i>
+            </a>
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-star transition-colors">
+              <i class="fa fa-qq"></i>
+            </a>
+          </div>
+        </div>
+        
+        <!-- 快速链接 -->
+        <div>
+          <h3 class="text-lg font-semibold mb-6">快速链接</h3>
+          <ul class="space-y-3">
+            <li><a href="#home" class="text-gray-400 hover:text-white transition-colors">首页</a></li>
+            <li><a href="#stars" class="text-gray-400 hover:text-white transition-colors">问宇星辰</a></li>
+            <li><a href="#heart" class="text-gray-400 hover:text-white transition-colors">问宇心忱</a></li>
+            <li><a href="#wishes" class="text-gray-400 hover:text-white transition-colors">星辰许愿</a></li>
+            <li><a href="#activities" class="text-gray-400 hover:text-white transition-colors">联合活动</a></li>
+          </ul>
+        </div>
+        
+        <!-- 社团信息 -->
+        <div>
+          <h3 class="text-lg font-semibold mb-6">社团信息</h3>
+          <ul class="space-y-3">
+            <li class="flex items-start space-x-2">
+              <i class="fa fa-users mt-1 text-star"></i>
+              <span class="text-gray-400">问宇物理社</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <i class="fa fa-heart mt-1 text-heart"></i>
+              <span class="text-gray-400">大学生心理协会</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <i class="fa fa-envelope-o mt-1 text-gray-400"></i>
+              <span class="text-gray-400">wenyu@university.edu</span>
+            </li>
+            <li class="flex items-start space-x-2">
+              <i class="fa fa-phone mt-1 text-gray-400"></i>
+              <span class="text-gray-400">138-xxxx-6789（社长）</span>
+            </li>
+          </ul>
+        </div>
+        
+        <!-- 订阅通知 -->
+        <div>
+          <h3 class="text-lg font-semibold mb-6">订阅活动通知</h3>
+          <form class="mb-4">
+            <div class="relative">
+              <input 
+                type="email" 
+                placeholder="输入你的邮箱" 
+                class="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-star"
+              >
+              <button type="submit" class="absolute right-1 top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-lg gradient-cosmic flex items-center justify-center">
+                <i class="fa fa-paper-plane"></i>
+              </button>
+            </div>
+          </form>
+          <p class="text-gray-400 text-sm">
+            订阅后将第一时间收到活动预告、愿望实现通知等信息
+          </p>
+        </div>
+      </div>
+      
+      <!-- 版权信息 -->
+      <div class="border-t border-gray-800 pt-8 text-center text-gray-500 text-sm">
+        <p>© 2024 问宇 版权所有 | 物理社 × 心协 联合主办</p>
+      </div>
+    </div>
+  </footer>
+  
+  <!-- 回到顶部按钮 -->
+  <button id="back-to-top" class="fixed bottom-8 right-8 w-12 h-12 rounded-full gradient-cosmic text-white shadow-lg flex items-center justify-center opacity-0 invisible transition-all duration-300 hover:opacity-90">
+    <i class="fa fa-arrow-up"></i>
+  </button>
+  
+  <!-- JavaScript -->
+  <script>
+    // 导航栏滚动效果
+    const navbar = document.getElementById('navbar');
+    const backToTop = document.getElementById('back-to-top');
+    
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 100) {
+        navbar.classList.add('shadow-md');
+        navbar.classList.remove('bg-white/95');
+        navbar.classList.add('bg-white');
+        
+        backToTop.classList.remove('opacity-0', 'invisible');
+        backToTop.classList.add('opacity-100', 'visible');
+      } else {
+        navbar.classList.remove('shadow-md');
+        navbar.classList.add('bg-white/95');
+        navbar.classList.remove('bg-white');
+        
+        backToTop.classList.add('opacity-0', 'invisible');
+        backToTop.classList.remove('opacity-100', 'visible');
+      }
+    });
+    
+    // 移动端菜单切换
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    menuToggle.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+    
+    // 回到顶部功能
+    backToTop.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+    
+    // 平滑滚动
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const targetId = this.getAttribute('href');
+        if (targetId === '#') return;
+        
+        const targetElement = document.querySelector(targetId);
+        if (targetElement) {
+          mobileMenu.classList.add('hidden');
+          targetElement.scrollIntoView({
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+    
+    // 数字增长动画
+    function animateValue(id, start, end, duration) {
+      const obj = document.getElementById(id);
+      let startTimestamp = null;
+      const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        const value = Math.floor(progress * (end - start) + start);
+        obj.innerText = value.toLocaleString();
+        if (progress < 1) {
+          window.requestAnimationFrame(step);
+        }
+      };
+      window.requestAnimationFrame(step);
+    }
+    
+    // 当元素进入视口时触发动画
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          if (entry.target.id === 'member-count') animateValue('member-count', 0, 386, 2000);
+          if (entry.target.id === 'topic-count') animateValue('topic-count', 0, 528, 2000);
+          if (entry.target.id === 'wish-count') animateValue('wish-count', 0, 273, 2000);
+          if (entry.target.id === 'activity-count') animateValue('activity-count', 0, 18, 2000);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    
+    // 观察数据统计元素
+    document.querySelectorAll('#member-count, #topic-count, #wish-count, #activity-count').forEach(el => {
+      observer.observe(el);
+    });
+    
+    // 愿望实现情况图表
+    const ctx = document.getElementById('wishChart').getContext('2d');
+    const wishChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['已实现', '处理中', '待处理'],
+        datasets: [{
+          data: [148, 76, 49],
+          backgroundColor: [
+            '#1E40AF', // 星辰蓝
+            '#F97316', // 心忱橙
+            '#94A3B8'  // 灰色
+          ],
+          borderWidth: 0,
+          hoverOffset: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              padding: 20,
+              font: {
+                size: 12,
+                family: 'Inter'
+              }
+            }
+          }
+        },
+        cutout: '70%'
+      }
+    });
+  </script>
+</body>
+</html>
